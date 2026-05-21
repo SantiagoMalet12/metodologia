@@ -1,0 +1,17 @@
+# Variables de entorno y claves privadas (¡Crucial!)
+.env
+.env.local
+.env.*
+!.env.example
+
+# Archivos virtuales y dependencias de Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+.pytest_cache/
+
+# Configuraciones de editores/IDE
+.vscode/
+.idea/
