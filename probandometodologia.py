@@ -1,4 +1,4 @@
-import google.generativeai as genai
+
 import os
 import requests
 import json
@@ -18,16 +18,57 @@ import time
 from playwright.sync_api import sync_playwright
 import os
 from julius_api import Julius
+from google import genai
+
+
+load_dotenv()
+
+RUTA_IMAGEN = r"C:\Users\Santi\Desktop\ejerciciosss\ejercicio2.jpg"
+TOKEN_JULIUS = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InJoM0dwdVZXd2JMMTJpYnBtamlxWCJ9.eyJodHRwczovL2NoYXR3aXRoeW91cmRhdGEuaW8vdXNlcl9lbWFpbCI6InNvbG9kaXNjb3JkamFqYUBnbWFpbC5jb20iLCJodHRwczovL2NoYXR3aXRoeW91cmRhdGEuaW8vanVsaXVzX2lkIjoiZmQ1NTEyOTQtNDRkOS00ODE0LTlmMGItNDBmMDZlNjdjYWJhIiwiaHR0cHM6Ly9jaGF0d2l0aHlvdXJkYXRhLmlvL21lcmdlZF9zdWJfaWQiOiJnb29nbGUtb2F1dGgyXzEwMjU1ODM2NzE1NTM2NDY0MzY5OCIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pby91c2VyX2lwIjoiMjgwMzo5ODAwOjk4YzQ6NmVkZTo0MDNhOjZkOGY6MWQ2MDoxOTA4IiwiaHR0cHM6Ly9jaGF0d2l0aHlvdXJkYXRhLmlvL3VzZXJfY291bnRyeUNvZGUiOiJBUiIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pby91c2VyX2NvbnRpbmVudENvZGUiOiJTQSIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pby9lbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaHR0cHM6Ly9jaGF0d2l0aHlvdXJkYXRhLmlvL2NyZWF0ZWRfYXQiOiIyMDI2LTA1LTIwVDE4OjAwOjA1LjA3OVoiLCJpc3MiOiJodHRwczovL2F1dGguanVsaXVzLmFpLyIsInN1YiI6Imdvb2dsZS1vYXV0aDJ8MTAyNTU4MzY3MTU1MzY0NjQzNjk4IiwiYXVkIjpbImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pbyIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS51cy5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNzc5Mzg5NTExLCJleHAiOjE3NzkzOTY3MTEsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwgb2ZmbGluZV9hY2Nlc3MiLCJhenAiOiJRWFRzV0RsdHlUSTFWclJIT1FSUmZUdEcxY2Y0WURLOCJ9.GopGk3J_w5VHzRk-ie78tlEM4mWbQ6hsViM5cTVDxsVwp42Cp1rikfJOj9f1HYW5aiFoBvARLrIzjU_2gMhb5lvkOJ6lsRBAEamQvH1H4gUtYF9jEfvHrDbvj6UOlMaOspDbr_Br99wcT4IldD8iq16RYxXpm6ouqJNf96x6uNshZlJZ4N9u5HnseVSo9ie_OmJfEhAcY-dBuZXyUaaAkIV0R9XAzGba5mcwNJ43hgr2V313rkc7UpKIi2J_kQHxGQQHvP_PsW55MBXU3lg00e9m_mGQjvViJBwhWM5XO1Wov3xvcnAch_Xj7UOZaey2Ou5tMTWvUw9wJaPETBvKRg"
+julius = Julius(api_key=TOKEN_JULIUS)
+api_keyy = os.getenv('API_KEYY')
+
+prompt = (
+                    "Pretende que eres un profesor de matemáticas de Harvard. Analiza este ejercicio. "
+                    "Da el resultado final claramente"
+                    "No quiero explicaciones, SOLO el resultado final sin decoraciones."
+                )
+
+
+
+def gemini_respuesta():
+
+    # 1. Inicializás el cliente pasando tu API key customizada desde las variables de entorno
+    # (Si tu variable se llamara GEMINI_API_KEY, el cliente la tomaría automáticamente sin pasarle parámetros)
+    client = genai.Client(api_key=api_keyy)
+    
+    # 2. Abrís la imagen
+    img = Image.open(RUTA_IMAGEN)
+                
+    prompt_ocr = (
+        "Actúa como un OCR experto en matemáticas. Transcribe exactamente el ejercicio, "
+        "ecuación o problema que aparece en la imagen a texto plano. "
+        "No quiero explicaciones, introducciones, ni que lo resuelvas. SOLO el texto matemático limpio."
+    )
+    
+    # 3. Llamás al modelo usando la estructura del nuevo SDK
+    response_gemini = client.models.generate_content(
+        model='gemini-2.5-flash',  # El modelo recomendado para estas tareas
+        contents=[prompt_ocr, img]
+    )
+    
+    ejercicio_en_texto = response_gemini.text.strip()
+    
+    return ejercicio_en_texto
+
+
+
+
 
 load_dotenv()
 def resolver_ejercicio_laguna(prompt_ejercicio):
-    # Poné acá tu clave real de OpenRouter
-    api_key = "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"
-    
-    # Lista de modelos gratuitos actuales para probar en orden
-    modelos_a_probar = [
-        "poolside/laguna-m.1:free"
-    ]
+    api_key = os.getenv('API_KEY_LAGUNA')
+    modelo="openai/gpt-oss-120b:free"
     
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -36,128 +77,105 @@ def resolver_ejercicio_laguna(prompt_ejercicio):
         "X-Title": "Script Local Metodologia"
     }
 
-    for modelo in modelos_a_probar:
-        intentos = 0
-        # Permitimos hasta 2 intentos por si salta el error de límite de peticiones (429)
-        while intentos < 2:
-            print(f"Intentando con el modelo: {modelo} (Intento {intentos + 1})...")
+    intentos = 0
+    # 2 intentos por si salta el error de limite de peticiones
+    while intentos < 2:
+        print(f"Resolviendo ejercicio con: {modelo} (Intento {intentos + 1})...")
+        
+        data = {
+            "model": modelo,
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "Pretende que eres un profesor de matemáticas de Harvard. Analiza y resuelve el ejercicio que te van a brindar. "
+                },
+                {
+                    "role": "user",
+                    "content": f"Analiza y resuelve este ejercicio. Da el resultado final claramente. No quiero explicaciones, SOLO el resultado final sin decoraciones: {prompt_ejercicio}"
+                }
+            ]
+        }
+        
+        try:
+            # empiezo el temporizador antes de enviar la peticion
+            tiempo_inicio = time.time()
             
-            data = {
-                "model": modelo,
-                "messages": [
-                    {
-                        "role": "system",
-                        "content": "Pretende que eres un profesor de matemáticas de Harvard. Analiza este ejercicio. Da el resultado final claramente como RESULTADO LAGOON: [valor]. "
-                    },
-                    {
-                        "role": "user",
-                        "content": f"Resolver el siguiente ejercicio. Solo mostrar resultado: {prompt_ejercicio}"
-                    }
-                ]
-            }
+            response = requests.post(
+                url="https://openrouter.ai/api/v1/chat/completions",
+                headers=headers,
+                data=json.dumps(data)
+            )
             
-            try:
-                # ⏱️ Empezamos a medir el tiempo justo antes de enviar la petición
-                tiempo_inicio = time.time()
+            tiempo_final = time.time()
+            segundos_transcurridos = tiempo_final - tiempo_inicio
+            
+            # si la respuesta es exitosa
+            if response.status_code == 200:
+                resultado = response.json()
+                respuesta_texto = resultado['choices'][0]['message']['content']
+                # .2f es para formatear a 2 decimales
+                print(f"Tiempo de respuesta: {segundos_transcurridos:.2f} segundos.")
+                print(respuesta_texto)
+                return respuesta_texto
+            
+            #si esta saturado
+            elif response.status_code == 429:
+                print(f"el modelo {modelo} esta saturado (429). Esperando 15 segundos para reintentar...")
+                time.sleep(15)
+                intentos += 1
+                continue
+            
+            # si esta caido
+            elif response.status_code == 404:
+                print(f"El modelo {modelo} tiro error 404 (No disponible).")
+                break 
                 
-                response = requests.post(
-                    url="https://openrouter.ai/api/v1/chat/completions",
-                    headers=headers,
-                    data=json.dumps(data)
-                )
-                
-                # ⏱️ Calculamos la duración total de la respuesta
-                tiempo_final = time.time()
-                segundos_transcurridos = tiempo_final - tiempo_inicio
-                
-                # Si la respuesta es exitosa
-                if response.status_code == 200:
-                    resultado = response.json()
-                    respuesta_texto = resultado['choices'][0]['message']['content']
-                    
-                    print(f"¡Éxito con el modelo {modelo}!")
-                    # Mostramos el tiempo formateado a dos decimales
-                    print(f"⏱️ Tiempo de respuesta: {segundos_transcurridos:.2f} segundos.")
-                    print("\n--- Respuesta de la IA ---")
-                    print(respuesta_texto)
-                    return respuesta_texto
-                
-                # Si está saturado (Rate Limited)
-                elif response.status_code == 429:
-                    print(f"El modelo {modelo} está saturado (429). Esperando 15 segundos para reintentar...")
-                    time.sleep(15)
-                    intentos += 1
-                    continue
-                
-                # Si el modelo ya no existe en OpenRouter
-                elif response.status_code == 404:
-                    print(f"El modelo {modelo} tiró error 404 (No disponible).")
-                    break  # Rompe el while para pasar al siguiente modelo
-                    
-                else:
-                    print(f"Error {response.status_code} con el modelo {modelo}: {response.text}")
-                    break
-                        
-            except Exception as e:
-                print(f"Error de conexión: {e}")
+            else:
+                print(f"Error {response.status_code} con el modelo {modelo}: {response.text}")
                 break
+                    
+        except Exception as e:
+            print(f"Error de conexión: {e}")
+            break
 
     print("No se pudo obtener respuesta de ningún modelo.")
     return None
 
 
 
-def analisiscongemini():
-    API_KEY = os.getenv('API_KEYY')
-    genai.configure(api_key=API_KEY)
-    model = genai.GenerativeModel('gemini-flash-latest')
+def analisiscongemini(enunciado):
+    
+    client = genai.Client(api_key=api_keyy)
 
-    def analizar_lote(carpeta_origen):
-        if not os.path.exists(carpeta_origen):
-            print(f"Error: La carpeta {carpeta_origen} no existe.")
-            return
-
-        #listamos archivos que sean imagenes 
-        extensiones_validas = ('.png', '.jpg', '.jpeg')
-        archivos = [f for f in os.listdir(carpeta_origen) if f.lower().endswith(extensiones_validas)]
-
-        if not archivos:
-            print("No se encontraron imágenes en la carpeta.")
-            return
-
-        print(f"Se encontraron {len(archivos)} ejercicios. Iniciando proceso...\n")
-
+    print(f"-> Gemini extrajo el siguiente texto: '{enunciado}'")
+    consigna_final = prompt + f" {enunciado}"
+    
+    try:
         
-        for nombre_archivo in archivos:
-            ruta_completa = os.path.join(carpeta_origen, nombre_archivo)
-            
-            try:
-                img = Image.open(ruta_completa)
-                
-                prompt = (
-                    "Pretende que eres un profesor de matemáticas de Harvard. Analiza este ejercicio. "
-                    "Da el resultado final claramente como RESULTADO GEMINI: [valor]. "
-                    "No quiero explicaciones, SOLO el resultado final sin decoraciones."
-                )
 
-                print(f"Cargando: {nombre_archivo}...")
-                response = model.generate_content([prompt, img])
-                
-                
-                print(f"Archivo: {nombre_archivo} -> {response.text.strip()}")
 
-            except Exception as e:
-                print(f"Error con {nombre_archivo}: {e}")
+        # Corregido: Usamos 'client.models.generate_content' y le pasamos el modelo que uses (ej: 'gemini-2.5-flash')
+        response = client.models.generate_content(
+            model='gemini-2.5-flash', 
+            contents=consigna_final
+        )
 
-    ruta_carpeta = r'C:\Users\Santi\Desktop\ejerciciosss' 
-    analizar_lote(ruta_carpeta)
+        # Retornamos o imprimimos el resultado limpio
+        resultado = response.text.strip()
+        print(resultado)
+        
+
+    except Exception as e:
+        print(f"Error al procesar el ejercicio: {e}")
+        return None
 
 
 
-def analisisconqwenmath():
+
+def analisisconqwenmath(ejercicio):
     
 
-    OPENROUTER_KEY = os.getenv('OPENROUTER_KEY')    
+    OPENROUTER_KEY = os.getenv('API_KEY_LAGUNA')    
     
 
     client = OpenAI(
@@ -165,84 +183,42 @@ def analisisconqwenmath():
         api_key=OPENROUTER_KEY,
     )
 
-    def codificar_imagen_base64(ruta_imagen):
-        try:
-            with open(ruta_imagen, "rb") as image_file:
-                return base64.b64encode(image_file.read()).decode('utf-8')
-        except FileNotFoundError:
-            print(f"No se encontro el archivo en {ruta_imagen}")
-            return None
 
-    def procesar_carpeta_qwen(ruta_carpeta):
-        if not os.path.exists(ruta_carpeta):
-            print(f"La carpeta '{ruta_carpeta}' no existe.")
-            return
-
-        # Listamos los archivos de imagen
-        archivos = [f for f in os.listdir(ruta_carpeta) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+    try:
         
-        if not archivos:
-            print("no hay imagenes en la carpeta.")
-            return
+        prompt_completo = (
+            "Pretende que eres un profesor de matemáticas de Harvard. Analiza este ejercicio matemático. "
+            f"El ejercicio es: {ejercicio}. "
+            "Da el resultado final claramente como RESULTADO QWEN-MATH: [valor]. "
+            "No quiero explicaciones, SOLO el resultado final sin decoraciones."
+        )
 
+        # 2. Simplificamos los mensajes a puro texto (Sin 'image_url')
+        response = client.chat.completions.create(
+            model="qwen/qwen-2-vl-72b-instruct", 
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt_completo  # <-- Pasamos el texto directo aquí
+                }
+            ]
+        )
+        
+        solucion = response.choices[0].message.content
+        print(solucion)
+        return solucion
 
-        for nombre_archivo in archivos:
-            ruta_completa = os.path.join(ruta_carpeta, nombre_archivo)
-            imagen_base64 = codificar_imagen_base64(ruta_completa)
-            
-            if not imagen_base64:
-                continue
-
-            try:
-                print(f"enviando {nombre_archivo} a Qwen2-VL...")
-                
-                response = client.chat.completions.create(
-                    model="qwen/qwen-2-vl-72b-instruct",
-                    messages=[
-                        {
-                            "role": "user",
-                            "content": [
-                                {
-                                    "type": "text", 
-                                    "text": "Pretende que eres un profesor de matemáticas de Harvard. Analiza este ejercicio matemático. "
-                                            "Da el resultado final claramente como RESULTADO QWEN-MATH: [valor]. "
-                                            "No quiero explicaciones, SOLO el RESULTADO FINAL sin decoraciones."
-                                },
-                                {
-                                    "type": "image_url",
-                                    "image_url": {
-                                        "url": f"data:image/png;base64,{imagen_base64}"
-                                    }
-                                }
-                            ]
-                        }
-                    ]
-                )
-
-                solucion = response.choices[0].message.content
-                print(f"Archivo: {nombre_archivo} -> {solucion.strip()}")
-
-            except Exception as e:
-                print(f"error al procesar {nombre_archivo} con Qwen: {e}")
-
-    ruta_ejercicios = r'C:\Users\Santi\Desktop\ejerciciosss'
-    procesar_carpeta_qwen(ruta_ejercicios)
+    except Exception as e:
+        print(f"error" + str(e))
 
 
 
-TOKEN_JULIUS = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InJoM0dwdVZXd2JMMTJpYnBtamlxWCJ9.eyJodHRwczovL2NoYXR3aXRoeW91cmRhdGEuaW8vdXNlcl9lbWFpbCI6InNvbG9kaXNjb3JkamFqYUBnbWFpbC5jb20iLCJodHRwczovL2NoYXR3aXRoeW91cmRhdGEuaW8vanVsaXVzX2lkIjoiZmQ1NTEyOTQtNDRkOS00ODE0LTlmMGItNDBmMDZlNjdjYWJhIiwiaHR0cHM6Ly9jaGF0d2l0aHlvdXJkYXRhLmlvL21lcmdlZF9zdWJfaWQiOiJnb29nbGUtb2F1dGgyXzEwMjU1ODM2NzE1NTM2NDY0MzY5OCIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pby91c2VyX2lwIjoiMjgwMzo5ODAwOjk4YzQ6NmVkZTo1NTJjOmMxNjU6ZDFkZjpiNmU4IiwiaHR0cHM6Ly9jaGF0d2l0aHlvdXJkYXRhLmlvL3VzZXJfY29udGluZW50Q29kZSI6IlNBIiwiaHR0cHM6Ly9jaGF0d2l0aHlvdXJkYXRhLmlvL2VtYWlsX3ZlcmlmaWVkIjp0cnVlLCJodHRwczovL2NoYXR3aXRoeW91cmRhdGEuaW8vY3JlYXRlZF9hdCI6IjIwMjYtMDUtMjBUMTg6MDA6MDUuMDc5WiIsImlzcyI6Imh0dHBzOi8vYXV0aC5qdWxpdXMuYWkvIiwic3ViIjoiZ29vZ2xlLW9hdXRoMnwxMDI1NTgzNjcxNTUzNjQ2NDM2OTgiLCJhdWQiOlsiaHR0cHM6Ly9jaGF0d2l0aHlvdXJkYXRhLmlvIiwiaHR0cHM6Ly9jaGF0d2l0aHlvdXJkYXRhLnVzLmF1dGgwLmNvbS91c2VyaW5mbyJdLCJpYXQiOjE3NzkzMDAwMDcsImV4cCI6MTc3OTMwNzIwNywic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCBvZmZsaW5lX2FjY2VzcyIsImF6cCI6IlFYVHNXRGx0eVRJMVZyUkhPUVJSZlR0RzFjZjRZREs4In0.EzgMVOSkN9Cs19Vl1mojG7N3QcTe07Q21r-Wgph1KmgQJvXLSjMu7B3GzPUUCoq9B5dqq6_7rbDrzc4hz4x_yUeVctr0Pw5XIYzwCepfJdGQX0e4ZCk_uG5XTg6J9z0SEf1wMj3i_imnJ3bkKLP0gSswyA3mJyDVM53gh_Bea1dStGYrH6vxL6IlDhJ60MrPWlpyGm046JgUMJGXPRE79osfldsP5C6oa4dyB74x3QPN332OvJZf1DOAMBiuC1xcESFAR_MUtatluLf4ugsVrQIoZODs-Xa9ptf_EZCBNsI4LqGV0XiNdgajwCRAtW4o4ngsHoMGi6rLik-yTXyyFQ"
-RUTA_IMAGEN = r"C:\Users\Santi\Desktop\ejerciciosss\ejercicio1.jpg"
-
-#API_KEY = os.getenv('API_KEYY')
-#genai.configure(api_key=API_KEY)
-#model_gemini = genai.GenerativeModel('gemini-flash-latest')
-
-
-# 2. Inicializás el cliente de Julius
-#julius = Julius(api_key=TOKEN_JULIUS)
-
-def probar_texto_julius(mensaje_ejercicio):
-    print(f"2. Intentando enviar el mensaje: '{mensaje_ejercicio}'")
+def probar_texto_julius(enunciado):
+    
+    print(f"-> Gemini extrajo el siguiente texto: '{enunciado}'")
+    consigna_final = prompt + f" {enunciado}"
+    
+    print(f"2. Intentando enviar el mensaje: '{enunciado}' a Julius para resolverlo...")
 
     try:
         response = julius.chat.completions.create(
@@ -250,7 +226,7 @@ def probar_texto_julius(mensaje_ejercicio):
             messages=[
                 {
                     "role": "user",
-                    "content": mensaje_ejercicio
+                    "content": consigna_final
                 }
             ],
             advanced_reasoning=True  
@@ -270,48 +246,8 @@ def probar_texto_julius(mensaje_ejercicio):
         return f"Error crítico en la conexión: {e}"
 
 
-# --- NUEVA LÓGICA DE TRANCRIPCIÓN ---
-    if __name__ == "__main__":
-        print("1. Gemini leyendo la imagen para extraer la ecuación...")
-        
-        if not os.path.exists(RUTA_IMAGEN):
-            print(f"Error: La imagen no existe en {RUTA_IMAGEN}")
-        else:
-            try:
-                # Gemini abre la foto
-                img = Image.open(RUTA_IMAGEN)
-                
-                prompt_ocr = (
-                    "Actúa como un OCR experto en matemáticas. Transcribe exactamente el ejercicio, "
-                    "ecuación o problema que aparece en la imagen a texto plano. "
-                    "No quiero explicaciones, introducciones, ni que lo resuelvas. SOLO el texto matemático limpio."
-                )
-                
-                response_gemini = model_gemini.generate_content([prompt_ocr, img])
-                ejercicio_en_texto = response_gemini.text.strip()
-                
-                print(f"-> Texto extraído de la foto: '{ejercicio_en_texto}'")
-                
-                # Le concatenamos el pedido de resolución para Julius
-                consigna_final = f"Resuelve el siguiente ejercicio paso a paso de forma detallada: {ejercicio_en_texto}"
-                
-                # Se lo mandamos a tu función de Julius que anda de diez
-                respuesta = probar_texto_julius(consigna_final)
-                
-                print("\n==================================================")
-                print("Respuesta de Julius:")
-                print(respuesta)
-                print("==================================================")
-                
-            except Exception as e:
-                print(f"Error en el proceso: {e}")
 
 
-#respuesta = probar_texto_julius("Resuelve el siguiente ejercicio: 2 + 2 * 3")
-#print("Respuesta de Julius:", respuesta)
-
-# Ejemplo de uso
-
-
-ejercicio = r"Resuelve el siguiente ejercicio: 2 + 2 * 3"
-resolver_ejercicio_laguna(ejercicio)
+analisisconqwenmath(gemini_respuesta())
+analisiscongemini(gemini_respuesta())
+           
