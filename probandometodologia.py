@@ -19,9 +19,19 @@ from playwright.sync_api import sync_playwright
 import os
 from julius_api import Julius
 from google import genai
+import mysql.connector
+from mysql.connector import Error
 
+
+ruta_carpeta = r"C:\Users\Santi\Desktop\ejerciciosss"
 
 load_dotenv()
+
+def proando():
+    for elemento in os.listdir(ruta_carpeta):
+        ruta_completa = os.path.join(ruta_carpeta, elemento)
+        if os.path.isfile(ruta_completa):
+            print(f"Archivo: {ruta_completa}")
 
 RUTA_IMAGEN = r"C:\Users\Santi\Desktop\ejerciciosss\ejercicio2.jpg"
 TOKEN_JULIUS = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InJoM0dwdVZXd2JMMTJpYnBtamlxWCJ9.eyJodHRwczovL2NoYXR3aXRoeW91cmRhdGEuaW8vdXNlcl9lbWFpbCI6InNvbG9kaXNjb3JkamFqYUBnbWFpbC5jb20iLCJodHRwczovL2NoYXR3aXRoeW91cmRhdGEuaW8vanVsaXVzX2lkIjoiZmQ1NTEyOTQtNDRkOS00ODE0LTlmMGItNDBmMDZlNjdjYWJhIiwiaHR0cHM6Ly9jaGF0d2l0aHlvdXJkYXRhLmlvL21lcmdlZF9zdWJfaWQiOiJnb29nbGUtb2F1dGgyXzEwMjU1ODM2NzE1NTM2NDY0MzY5OCIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pby91c2VyX2lwIjoiMjgwMzo5ODAwOjk4YzQ6NmVkZTo0MDNhOjZkOGY6MWQ2MDoxOTA4IiwiaHR0cHM6Ly9jaGF0d2l0aHlvdXJkYXRhLmlvL3VzZXJfY291bnRyeUNvZGUiOiJBUiIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pby91c2VyX2NvbnRpbmVudENvZGUiOiJTQSIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pby9lbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaHR0cHM6Ly9jaGF0d2l0aHlvdXJkYXRhLmlvL2NyZWF0ZWRfYXQiOiIyMDI2LTA1LTIwVDE4OjAwOjA1LjA3OVoiLCJpc3MiOiJodHRwczovL2F1dGguanVsaXVzLmFpLyIsInN1YiI6Imdvb2dsZS1vYXV0aDJ8MTAyNTU4MzY3MTU1MzY0NjQzNjk4IiwiYXVkIjpbImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pbyIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS51cy5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNzc5Mzg5NTExLCJleHAiOjE3NzkzOTY3MTEsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwgb2ZmbGluZV9hY2Nlc3MiLCJhenAiOiJRWFRzV0RsdHlUSTFWclJIT1FSUmZUdEcxY2Y0WURLOCJ9.GopGk3J_w5VHzRk-ie78tlEM4mWbQ6hsViM5cTVDxsVwp42Cp1rikfJOj9f1HYW5aiFoBvARLrIzjU_2gMhb5lvkOJ6lsRBAEamQvH1H4gUtYF9jEfvHrDbvj6UOlMaOspDbr_Br99wcT4IldD8iq16RYxXpm6ouqJNf96x6uNshZlJZ4N9u5HnseVSo9ie_OmJfEhAcY-dBuZXyUaaAkIV0R9XAzGba5mcwNJ43hgr2V313rkc7UpKIi2J_kQHxGQQHvP_PsW55MBXU3lg00e9m_mGQjvViJBwhWM5XO1Wov3xvcnAch_Xj7UOZaey2Ou5tMTWvUw9wJaPETBvKRg"
@@ -37,30 +47,62 @@ prompt = (
 
 
 def gemini_respuesta():
+    lista_ejercicios = []
+
+    conexion = mysql.connector.connect(
+        host='localhost',          # O '127.0.0.1'
+        user='root',               # Tu usuario de MySQL
+        password='12345',  # Cambia esto por tu contraseña real
+        database='tp_metodologia'       # Tu base de datos creada en Workbench
+    )
 
     # 1. Inicializás el cliente pasando tu API key customizada desde las variables de entorno
     # (Si tu variable se llamara GEMINI_API_KEY, el cliente la tomaría automáticamente sin pasarle parámetros)
     client = genai.Client(api_key=api_keyy)
     
-    # 2. Abrís la imagen
-    img = Image.open(RUTA_IMAGEN)
-                
-    prompt_ocr = (
-        "Actúa como un OCR experto en matemáticas. Transcribe exactamente el ejercicio, "
-        "ecuación o problema que aparece en la imagen a texto plano. "
-        "No quiero explicaciones, introducciones, ni que lo resuelvas. SOLO el texto matemático limpio."
-    )
-    
-    # 3. Llamás al modelo usando la estructura del nuevo SDK
-    response_gemini = client.models.generate_content(
-        model='gemini-2.5-flash',  # El modelo recomendado para estas tareas
-        contents=[prompt_ocr, img]
-    )
-    
-    ejercicio_en_texto = response_gemini.text.strip()
-    
-    return ejercicio_en_texto
+    for elemento in os.listdir(ruta_carpeta):
+        ruta_completa = os.path.join(ruta_carpeta, elemento)
+        if os.path.isfile(ruta_completa):
+            img = Image.open(ruta_completa)
 
+            prompt_ocr = (
+            "Actúa como un OCR experto en matemáticas. Transcribe exactamente el ejercicio, "
+            "ecuación o problema que aparece en la imagen a texto plano. "
+            "No quiero explicaciones, introducciones, ni que lo resuelvas. SOLO el texto matemático limpio."
+            )
+        
+            # 3. Llamás al modelo usando la estructura del nuevo SDK
+            response_gemini = client.models.generate_content(
+                model='gemini-2.5-flash',  # El modelo recomendado para estas tareas
+                contents=[prompt_ocr, img]
+            )
+
+
+        ejercicio_en_texto = response_gemini.text.strip()
+        lista_ejercicios.append(ejercicio_en_texto)
+        
+
+        if conexion.is_connected():
+            cursor = conexion.cursor()
+
+            # 1. Definir la consulta SQL con marcadores de posición (%s)
+            # Reemplaza 'usuarios', 'nombre' y 'email' con los nombres reales de tu tabla y columnas
+            sql_insertar = "INSERT INTO ejercicio (texto_ejercicio) VALUES (%s)"
+
+            # 2. Los datos reales que vas a meter (en una tupla)
+            valores = (
+                ejercicio_en_texto,  # texto_ejercicio (TEXT)
+            )
+
+            # 3. Ejecutar la consulta pasando el SQL y los valores por separado
+            cursor.execute(sql_insertar, valores)
+
+            # 4. ¡EL PASO CLAVE! Confirmar y guardar los cambios en la base de datos
+            conexion.commit()
+        
+        
+    
+    return lista_ejercicios
 
 
 
@@ -248,6 +290,5 @@ def probar_texto_julius(enunciado):
 
 
 
-analisisconqwenmath(gemini_respuesta())
-analisiscongemini(gemini_respuesta())
-           
+resultados = gemini_respuesta()
+print(resultados)
