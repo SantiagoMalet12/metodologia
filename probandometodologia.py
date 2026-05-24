@@ -23,26 +23,57 @@ import mysql.connector
 from mysql.connector import Error
 
 
-ruta_carpeta = r"C:\Users\Santi\Desktop\ejerciciosss"
-
-load_dotenv()
-
-def proando():
-    for elemento in os.listdir(ruta_carpeta):
-        ruta_completa = os.path.join(ruta_carpeta, elemento)
-        if os.path.isfile(ruta_completa):
-            print(f"Archivo: {ruta_completa}")
-
-RUTA_IMAGEN = r"C:\Users\Santi\Desktop\ejerciciosss\ejercicio2.jpg"
-TOKEN_JULIUS = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InJoM0dwdVZXd2JMMTJpYnBtamlxWCJ9.eyJodHRwczovL2NoYXR3aXRoeW91cmRhdGEuaW8vdXNlcl9lbWFpbCI6InNvbG9kaXNjb3JkamFqYUBnbWFpbC5jb20iLCJodHRwczovL2NoYXR3aXRoeW91cmRhdGEuaW8vanVsaXVzX2lkIjoiZmQ1NTEyOTQtNDRkOS00ODE0LTlmMGItNDBmMDZlNjdjYWJhIiwiaHR0cHM6Ly9jaGF0d2l0aHlvdXJkYXRhLmlvL21lcmdlZF9zdWJfaWQiOiJnb29nbGUtb2F1dGgyXzEwMjU1ODM2NzE1NTM2NDY0MzY5OCIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pby91c2VyX2lwIjoiMjgwMzo5ODAwOjk4YzQ6NmVkZTo0MDNhOjZkOGY6MWQ2MDoxOTA4IiwiaHR0cHM6Ly9jaGF0d2l0aHlvdXJkYXRhLmlvL3VzZXJfY291bnRyeUNvZGUiOiJBUiIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pby91c2VyX2NvbnRpbmVudENvZGUiOiJTQSIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pby9lbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaHR0cHM6Ly9jaGF0d2l0aHlvdXJkYXRhLmlvL2NyZWF0ZWRfYXQiOiIyMDI2LTA1LTIwVDE4OjAwOjA1LjA3OVoiLCJpc3MiOiJodHRwczovL2F1dGguanVsaXVzLmFpLyIsInN1YiI6Imdvb2dsZS1vYXV0aDJ8MTAyNTU4MzY3MTU1MzY0NjQzNjk4IiwiYXVkIjpbImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pbyIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS51cy5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNzc5Mzg5NTExLCJleHAiOjE3NzkzOTY3MTEsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwgb2ZmbGluZV9hY2Nlc3MiLCJhenAiOiJRWFRzV0RsdHlUSTFWclJIT1FSUmZUdEcxY2Y0WURLOCJ9.GopGk3J_w5VHzRk-ie78tlEM4mWbQ6hsViM5cTVDxsVwp42Cp1rikfJOj9f1HYW5aiFoBvARLrIzjU_2gMhb5lvkOJ6lsRBAEamQvH1H4gUtYF9jEfvHrDbvj6UOlMaOspDbr_Br99wcT4IldD8iq16RYxXpm6ouqJNf96x6uNshZlJZ4N9u5HnseVSo9ie_OmJfEhAcY-dBuZXyUaaAkIV0R9XAzGba5mcwNJ43hgr2V313rkc7UpKIi2J_kQHxGQQHvP_PsW55MBXU3lg00e9m_mGQjvViJBwhWM5XO1Wov3xvcnAch_Xj7UOZaey2Ou5tMTWvUw9wJaPETBvKRg"
-julius = Julius(api_key=TOKEN_JULIUS)
-api_keyy = os.getenv('API_KEYY')
-
 prompt = (
                     "Pretende que eres un profesor de matemáticas de Harvard. Analiza este ejercicio. "
                     "Da el resultado final claramente"
                     "No quiero explicaciones, SOLO el resultado final sin decoraciones."
                 )
+
+
+
+ruta_carpeta = r"C:\Users\Santi\Desktop\ejerciciosss"
+load_dotenv()
+TOKEN_JULIUS = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InJoM0dwdVZXd2JMMTJpYnBtamlxWCJ9.eyJodHRwczovL2NoYXR3aXRoeW91cmRhdGEuaW8vdXNlcl9lbWFpbCI6InNvbG9kaXNjb3JkamFqYUBnbWFpbC5jb20iLCJodHRwczovL2NoYXR3aXRoeW91cmRhdGEuaW8vanVsaXVzX2lkIjoiZmQ1NTEyOTQtNDRkOS00ODE0LTlmMGItNDBmMDZlNjdjYWJhIiwiaHR0cHM6Ly9jaGF0d2l0aHlvdXJkYXRhLmlvL21lcmdlZF9zdWJfaWQiOiJnb29nbGUtb2F1dGgyXzEwMjU1ODM2NzE1NTM2NDY0MzY5OCIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pby91c2VyX2lwIjoiMjgwMzo5ODAwOjk4YzQ6NmVkZTo0MDNhOjZkOGY6MWQ2MDoxOTA4IiwiaHR0cHM6Ly9jaGF0d2l0aHlvdXJkYXRhLmlvL3VzZXJfY291bnRyeUNvZGUiOiJBUiIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pby91c2VyX2NvbnRpbmVudENvZGUiOiJTQSIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pby9lbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaHR0cHM6Ly9jaGF0d2l0aHlvdXJkYXRhLmlvL2NyZWF0ZWRfYXQiOiIyMDI2LTA1LTIwVDE4OjAwOjA1LjA3OVoiLCJpc3MiOiJodHRwczovL2F1dGguanVsaXVzLmFpLyIsInN1YiI6Imdvb2dsZS1vYXV0aDJ8MTAyNTU4MzY3MTU1MzY0NjQzNjk4IiwiYXVkIjpbImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pbyIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS51cy5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNzc5Mzg5NTExLCJleHAiOjE3NzkzOTY3MTEsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwgb2ZmbGluZV9hY2Nlc3MiLCJhenAiOiJRWFRzV0RsdHlUSTFWclJIT1FSUmZUdEcxY2Y0WURLOCJ9.GopGk3J_w5VHzRk-ie78tlEM4mWbQ6hsViM5cTVDxsVwp42Cp1rikfJOj9f1HYW5aiFoBvARLrIzjU_2gMhb5lvkOJ6lsRBAEamQvH1H4gUtYF9jEfvHrDbvj6UOlMaOspDbr_Br99wcT4IldD8iq16RYxXpm6ouqJNf96x6uNshZlJZ4N9u5HnseVSo9ie_OmJfEhAcY-dBuZXyUaaAkIV0R9XAzGba5mcwNJ43hgr2V313rkc7UpKIi2J_kQHxGQQHvP_PsW55MBXU3lg00e9m_mGQjvViJBwhWM5XO1Wov3xvcnAch_Xj7UOZaey2Ou5tMTWvUw9wJaPETBvKRg"
+julius = Julius(api_key=TOKEN_JULIUS)
+api_keyy = os.getenv('API_KEYY')
+
+
+
+def emitir_ejercicio():
+    try:
+        # 2. Conectarse a la base de datos
+        conexion = mysql.connector.connect(
+            host='localhost',         # o la IP de tu servidor
+            user='root',              # tu usuario de MySQL
+            password='12345',    # tu contraseña de MySQL
+            database='tp_metodologia'       # el nombre de tu base de datos
+        )
+
+
+        if conexion.is_connected():
+            # 3. Crear el cursor
+            cursor = conexion.cursor()
+            
+            # 4. Definir y ejecutar la consulta SQL
+            query = "SELECT id, texto_ejercicio FROM ejercicio"
+            cursor.execute(query)
+
+            # 5. Recuperar todos los resultados
+            # fetchall() trae una lista de tuplas [(id, nombre, punt), (id, nombre, punt)]
+            resultados = cursor.fetchall()
+
+            print(f"Total de registros encontrados: {len(resultados)}\n")
+
+            # 6. Recorrer y mostrar los datos
+            for fila in resultados:
+                # Podés acceder por índice a cada columna del SELECT
+                id = fila[0]
+                texto_ejercicio = fila[1]
+                
+                print(f"ID: {id} | Ejercicio: {texto_ejercicio}")
+    except Error as e:
+        print(f"Error al conectar o leer la base de datos: {e}")
+    return resultados
 
 
 
@@ -185,31 +216,56 @@ def resolver_ejercicio_laguna(prompt_ejercicio):
 
 
 
-def analisiscongemini(enunciado):
+def analisiscongemini():
+
+    conexion = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='12345', # O tu contraseña directa
+            database='tp_metodologia'
+        )
+
+    print("Trayendo ejercicios desde la base de datos para resolverlos con Gemini...")
+    lista_ejercicios = emitir_ejercicio()
     
     client = genai.Client(api_key=api_keyy)
 
-    print(f"-> Gemini extrajo el siguiente texto: '{enunciado}'")
-    consigna_final = prompt + f" {enunciado}"
+
+
+    for i in range(0, len(lista_ejercicios)):
+
+        id_ejercicio = lista_ejercicios[i][0]
+        enunciado = lista_ejercicios[i][1]
+        print("Enunciado :" + enunciado)
+
     
-    try:
-        
+        consigna_final = prompt + f" {enunciado}"
+    
+        try:
+            
+            # Corregido: Usamos 'client.models.generate_content' y le pasamos el modelo que uses (ej: 'gemini-2.5-flash')
+            response = client.models.generate_content(
+                model='gemini-2.5-flash', 
+                contents=consigna_final
+            )
 
+            # Retornamos o imprimimos el resultado limpio
+            resultado = response.text.strip()
+            
 
-        # Corregido: Usamos 'client.models.generate_content' y le pasamos el modelo que uses (ej: 'gemini-2.5-flash')
-        response = client.models.generate_content(
-            model='gemini-2.5-flash', 
-            contents=consigna_final
-        )
+            if conexion.is_connected():
+                cursor = conexion.cursor()
 
-        # Retornamos o imprimimos el resultado limpio
-        resultado = response.text.strip()
-        print(resultado)
-        
+                sql_insertar = "INSERT INTO resultado (idejercicio, nombreia, resultado) VALUES (%s, %s, %s)"
+                valores = (id_ejercicio, "Gemini", resultado)
 
-    except Exception as e:
-        print(f"Error al procesar el ejercicio: {e}")
-        return None
+                cursor.execute(sql_insertar, valores)
+                conexion.commit()
+            
+
+        except Exception as e:
+            print(f"Error al procesar el ejercicio: {e}")
+            return None
 
 
 
@@ -289,6 +345,4 @@ def probar_texto_julius(enunciado):
 
 
 
-
-resultados = gemini_respuesta()
-print(resultados)
+analisiscongemini()
