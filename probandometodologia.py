@@ -41,32 +41,28 @@ api_keyy = os.getenv('API_KEYY')
 
 def emitir_ejercicio():
     try:
-        # 2. Conectarse a la base de datos
+        # conexion
         conexion = mysql.connector.connect(
-            host='localhost',         # o la IP de tu servidor
-            user='root',              # tu usuario de MySQL
-            password='12345',    # tu contraseña de MySQL
-            database='tp_metodologia'       # el nombre de tu base de datos
+            host='localhost',         
+            user='root',              
+            password='12345',    
+            database='tp_metodologia'       
         )
 
 
         if conexion.is_connected():
-            # 3. Crear el cursor
             cursor = conexion.cursor()
-            
-            # 4. Definir y ejecutar la consulta SQL
             query = "SELECT id, texto_ejercicio FROM ejercicio"
             cursor.execute(query)
 
-            # 5. Recuperar todos los resultados
             # fetchall() trae una lista de tuplas [(id, nombre, punt), (id, nombre, punt)]
             resultados = cursor.fetchall()
 
             print(f"Total de registros encontrados: {len(resultados)}\n")
 
-            # 6. Recorrer y mostrar los datos
+            # recorrer y mostrar los datos
             for fila in resultados:
-                # Podés acceder por índice a cada columna del SELECT
+                
                 id = fila[0]
                 texto_ejercicio = fila[1]
                 
@@ -80,16 +76,15 @@ def gemini_respuesta():
     lista_ejercicios = []
 
     conexion = mysql.connector.connect(
-        host='localhost',          # O '127.0.0.1'
-        user='root',               # Tu usuario de MySQL
-        password='12345',  # Cambia esto por tu contraseña real
-        database='tp_metodologia'       # Tu base de datos creada en Workbench
+        host='localhost',          
+        user='root',               
+        password='12345',  
+        database='tp_metodologia'       
     )
 
-    # 1. Inicializás el cliente pasando tu API key customizada desde las variables de entorno
-    # (Si tu variable se llamara GEMINI_API_KEY, el cliente la tomaría automáticamente sin pasarle parámetros)
-    client = genai.Client(api_key=api_keyy)
     
+    client = genai.Client(api_key=api_keyy)
+    #lectura de carpeta
     for elemento in os.listdir(ruta_carpeta):
         ruta_completa = os.path.join(ruta_carpeta, elemento)
         if os.path.isfile(ruta_completa):
@@ -101,9 +96,9 @@ def gemini_respuesta():
             "No quiero explicaciones, introducciones, ni que lo resuelvas. SOLO el texto matemático limpio."
             )
         
-            # 3. Llamás al modelo usando la estructura del nuevo SDK
+            
             response_gemini = client.models.generate_content(
-                model='gemini-2.5-flash',  # El modelo recomendado para estas tareas
+                model='gemini-2.5-flash',  
                 contents=[prompt_ocr, img]
             )
 
@@ -111,23 +106,16 @@ def gemini_respuesta():
         ejercicio_en_texto = response_gemini.text.strip()
         lista_ejercicios.append(ejercicio_en_texto)
         
-
+        #inserta texto ejercicio
         if conexion.is_connected():
             cursor = conexion.cursor()
 
-            # 1. Definir la consulta SQL con marcadores de posición (%s)
-            # Reemplaza 'usuarios', 'nombre' y 'email' con los nombres reales de tu tabla y columnas
             sql_insertar = "INSERT INTO ejercicio (texto_ejercicio) VALUES (%s)"
-
-            # 2. Los datos reales que vas a meter (en una tupla)
             valores = (
                 ejercicio_en_texto,  # texto_ejercicio (TEXT)
             )
-
-            # 3. Ejecutar la consulta pasando el SQL y los valores por separado
             cursor.execute(sql_insertar, valores)
 
-            # 4. ¡EL PASO CLAVE! Confirmar y guardar los cambios en la base de datos
             conexion.commit()
         
         
@@ -222,7 +210,7 @@ def analisiscongemini():
     conexion = mysql.connector.connect(
             host='localhost',
             user='root',
-            password='12345', # O tu contraseña directa
+            password='12345', 
             database='tp_metodologia'
         )
 
@@ -244,16 +232,15 @@ def analisiscongemini():
     
         try:
             
-            # Corregido: Usamos 'client.models.generate_content' y le pasamos el modelo que uses (ej: 'gemini-2.5-flash')
             response = client.models.generate_content(
                 model='gemini-2.5-flash', 
                 contents=consigna_final
             )
 
-            # Retornamos o imprimimos el resultado limpio
+            # retora el texto limpio
             resultado = response.text.strip()
             
-
+            #inserta valores
             if conexion.is_connected():
                 cursor = conexion.cursor()
 
@@ -292,13 +279,12 @@ def analisisconqwenmath(ejercicio):
             "No quiero explicaciones, SOLO el resultado final sin decoraciones."
         )
 
-        # 2. Simplificamos los mensajes a puro texto (Sin 'image_url')
         response = client.chat.completions.create(
             model="qwen/qwen-2-vl-72b-instruct", 
             messages=[
                 {
                     "role": "user",
-                    "content": prompt_completo  # <-- Pasamos el texto directo aquí
+                    "content": prompt_completo  
                 }
             ]
         )
