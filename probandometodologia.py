@@ -76,7 +76,6 @@ def emitir_ejercicio():
     return resultados
 
 
-
 def gemini_respuesta():
     lista_ejercicios = []
 
@@ -139,6 +138,8 @@ def gemini_respuesta():
 
 
 load_dotenv()
+
+
 def resolver_ejercicio_laguna(prompt_ejercicio):
     api_key = os.getenv('API_KEY_LAGUNA')
     modelo="openai/gpt-oss-120b:free"
