@@ -55,7 +55,7 @@ def emitir_ejercicio():
             query = "SELECT id, texto_ejercicio FROM ejercicio"
             cursor.execute(query)
 
-            # fetchall() trae una lista de tuplas [(id, nombre, punt), (id, nombre, punt)]
+            # fetchall trae una lista de tuplas
             resultados = cursor.fetchall()
 
             print(f"Total de registros encontrados: {len(resultados)}\n")
@@ -332,4 +332,4 @@ def probar_texto_julius(enunciado):
 
 
 
-analisiscongemini()
+gemini_respuesta()
