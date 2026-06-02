@@ -1,5 +1,6 @@
 
 import os
+from urllib import response
 import requests
 import json
 from PIL import Image
@@ -33,13 +34,13 @@ prompt = (
 
 ruta_carpeta = r"C:\Users\Santi\Desktop\ejerciciosss"
 load_dotenv()
-TOKEN_JULIUS = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InJoM0dwdVZXd2JMMTJpYnBtamlxWCJ9.eyJodHRwczovL2NoYXR3aXRoeW91cmRhdGEuaW8vdXNlcl9lbWFpbCI6InNvbG9kaXNjb3JkamFqYUBnbWFpbC5jb20iLCJodHRwczovL2NoYXR3aXRoeW91cmRhdGEuaW8vanVsaXVzX2lkIjoiZmQ1NTEyOTQtNDRkOS00ODE0LTlmMGItNDBmMDZlNjdjYWJhIiwiaHR0cHM6Ly9jaGF0d2l0aHlvdXJkYXRhLmlvL21lcmdlZF9zdWJfaWQiOiJnb29nbGUtb2F1dGgyXzEwMjU1ODM2NzE1NTM2NDY0MzY5OCIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pby91c2VyX2lwIjoiMjgwMzo5ODAwOjk4YzQ6NmVkZTo0MDNhOjZkOGY6MWQ2MDoxOTA4IiwiaHR0cHM6Ly9jaGF0d2l0aHlvdXJkYXRhLmlvL3VzZXJfY291bnRyeUNvZGUiOiJBUiIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pby91c2VyX2NvbnRpbmVudENvZGUiOiJTQSIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pby9lbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaHR0cHM6Ly9jaGF0d2l0aHlvdXJkYXRhLmlvL2NyZWF0ZWRfYXQiOiIyMDI2LTA1LTIwVDE4OjAwOjA1LjA3OVoiLCJpc3MiOiJodHRwczovL2F1dGguanVsaXVzLmFpLyIsInN1YiI6Imdvb2dsZS1vYXV0aDJ8MTAyNTU4MzY3MTU1MzY0NjQzNjk4IiwiYXVkIjpbImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pbyIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS51cy5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNzc5Mzg5NTExLCJleHAiOjE3NzkzOTY3MTEsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwgb2ZmbGluZV9hY2Nlc3MiLCJhenAiOiJRWFRzV0RsdHlUSTFWclJIT1FSUmZUdEcxY2Y0WURLOCJ9.GopGk3J_w5VHzRk-ie78tlEM4mWbQ6hsViM5cTVDxsVwp42Cp1rikfJOj9f1HYW5aiFoBvARLrIzjU_2gMhb5lvkOJ6lsRBAEamQvH1H4gUtYF9jEfvHrDbvj6UOlMaOspDbr_Br99wcT4IldD8iq16RYxXpm6ouqJNf96x6uNshZlJZ4N9u5HnseVSo9ie_OmJfEhAcY-dBuZXyUaaAkIV0R9XAzGba5mcwNJ43hgr2V313rkc7UpKIi2J_kQHxGQQHvP_PsW55MBXU3lg00e9m_mGQjvViJBwhWM5XO1Wov3xvcnAch_Xj7UOZaey2Ou5tMTWvUw9wJaPETBvKRg"
+TOKEN_JULIUS = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InJoM0dwdVZXd2JMMTJpYnBtamlxWCJ9.eyJodHRwczovL2NoYXR3aXRoeW91cmRhdGEuaW8vdXNlcl9lbWFpbCI6InNhbnRpYWdvLm1hbGV0LjEyQGdtYWlsLmNvbSIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pby9qdWxpdXNfaWQiOiIwMjAxZDNmZS1jMjBiLTRlYmItYjRlNy0zZGE0M2Q4ZjdkZDQiLCJodHRwczovL2NoYXR3aXRoeW91cmRhdGEuaW8vbWVyZ2VkX3N1Yl9pZCI6Imdvb2dsZS1vYXV0aDJfMTA0NjIzNzAwNzgzMTYzOTk4Mzc5IiwiaHR0cHM6Ly9jaGF0d2l0aHlvdXJkYXRhLmlvL3VzZXJfaXAiOiIyODAzOjk4MDA6OThjNDo2ZWRlOmQ0NGU6NjI4NDo0MTBlOjNiNiIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pby91c2VyX2NvbnRpbmVudENvZGUiOiJTQSIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pby9lbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaHR0cHM6Ly9jaGF0d2l0aHlvdXJkYXRhLmlvL2NyZWF0ZWRfYXQiOiIyMDI2LTA2LTAyVDE4OjQ3OjUzLjI5NFoiLCJpc3MiOiJodHRwczovL2F1dGguanVsaXVzLmFpLyIsInN1YiI6Imdvb2dsZS1vYXV0aDJ8MTA0NjIzNzAwNzgzMTYzOTk4Mzc5IiwiYXVkIjpbImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS5pbyIsImh0dHBzOi8vY2hhdHdpdGh5b3VyZGF0YS51cy5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNzgwNDI2MDc1LCJleHAiOjE3ODA0MzMyNzUsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwgb2ZmbGluZV9hY2Nlc3MiLCJhenAiOiJRWFRzV0RsdHlUSTFWclJIT1FSUmZUdEcxY2Y0WURLOCJ9.eCnzygQI3ut0BlvE27Erh7RMCWq__FMPDMXzftpLy4E-IHI2uc2cAAjWU4F0cW313dadHp0Qm_F1pkmuMwY_s-3eWLnZt7SYFlz3ZcomUpeJ4szBI676eoDhF3VMuWH5LtiUuIY23xH-R_x0tM80gdAQz-SATR_gJSybK0Bb_FyFgthcOPquw6A4q7X9mPt2oSSvjoIbnIbxqJYWK282eHhlO5gJUtQbxS7EdwWRR6cZzY--SVIQG1NSlhlbBBNeFGhy6dzViQbGfBsvPkwwXxd97-yAE0UWNUVOxDq801FN60RLdXTF5usoGVrnZku9z5GUPTSDbzXpwepIkVKerg"
 julius = Julius(api_key=TOKEN_JULIUS)
 api_keyy = os.getenv('API_KEYY')
 
 
 
-def emitir_ejercicio():
+def emitir_ejercicio(id_minimo):
     try:
         # conexion
         conexion = mysql.connector.connect(
@@ -52,8 +53,8 @@ def emitir_ejercicio():
 
         if conexion.is_connected():
             cursor = conexion.cursor()
-            query = "SELECT id, texto_ejercicio FROM ejercicio"
-            cursor.execute(query)
+            query = "SELECT id, texto_ejercicio FROM ejercicio WHERE id > %s"
+            cursor.execute(query, (id_minimo,))
 
             # fetchall trae una lista de tuplas
             resultados = cursor.fetchall()
@@ -85,7 +86,10 @@ def gemini_respuesta():
     
     client = genai.Client(api_key=api_keyy)
     #lectura de carpeta
-    for elemento in os.listdir(ruta_carpeta):
+    for elemento in sorted(
+        os.listdir(ruta_carpeta),
+        key=lambda x: int(os.path.splitext(x)[0])
+    ):
         ruta_completa = os.path.join(ruta_carpeta, elemento)
         if os.path.isfile(ruta_completa):
             img = Image.open(ruta_completa)
@@ -110,9 +114,13 @@ def gemini_respuesta():
         if conexion.is_connected():
             cursor = conexion.cursor()
 
-            sql_insertar = "INSERT INTO ejercicio (texto_ejercicio) VALUES (%s)"
+            sql_insertar = "INSERT INTO ejercicio (id, texto_ejercicio, materia) VALUES (%s, %s, %s)"
+
+            id_ejercicio = int(os.path.splitext(elemento)[0])
             valores = (
-                ejercicio_en_texto,  # texto_ejercicio (TEXT)
+                id_ejercicio,
+                ejercicio_en_texto,
+                "Analisis matematico 2"
             )
             cursor.execute(sql_insertar, valores)
 
@@ -128,9 +136,9 @@ def gemini_respuesta():
 load_dotenv()
 
 
-def resolver_ejercicio_laguna(prompt_ejercicio):
+def analisiscongptoss(var):
     api_key = os.getenv('API_KEY_LAGUNA')
-    modelo="openai/gpt-oss-120b:free"
+    modelo = "openai/gpt-oss-120b:free"
     
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -139,73 +147,117 @@ def resolver_ejercicio_laguna(prompt_ejercicio):
         "X-Title": "Script Local Metodologia"
     }
 
-    intentos = 0
-    # 2 intentos por si salta el error de limite de peticiones
-    while intentos < 2:
-        print(f"Resolviendo ejercicio con: {modelo} (Intento {intentos + 1})...")
+    conexion = None
+    cursor = None
+
+    try:
+        conexion = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='12345', 
+            database='tp_metodologia'
+        )
+
+        print(f"Trayendo ejercicios desde la base de datos para resolverlos con {modelo}...")
+        lista_ejercicios = emitir_ejercicio(var)
+
+        if not lista_ejercicios:
+            print("No se encontraron ejercicios para procesar.")
+            return
         
-        data = {
-            "model": modelo,
-            "messages": [
-                {
-                    "role": "system",
-                    "content": "Pretende que eres un profesor de matemáticas de Harvard. Analiza y resuelve el ejercicio que te van a brindar. "
-                },
-                {
-                    "role": "user",
-                    "content": f"Analiza y resuelve este ejercicio. Da el resultado final claramente. No quiero explicaciones, SOLO el resultado final sin decoraciones: {prompt_ejercicio}"
-                }
-            ]
-        }
-        
-        try:
-            # empiezo el temporizador antes de enviar la peticion
-            tiempo_inicio = time.time()
-            
-            response = requests.post(
-                url="https://openrouter.ai/api/v1/chat/completions",
-                headers=headers,
-                data=json.dumps(data)
-            )
-            
-            tiempo_final = time.time()
-            segundos_transcurridos = tiempo_final - tiempo_inicio
-            
-            # si la respuesta es exitosa
-            if response.status_code == 200:
-                resultado = response.json()
-                respuesta_texto = resultado['choices'][0]['message']['content']
-                # .2f es para formatear a 2 decimales
-                print(f"Tiempo de respuesta: {segundos_transcurridos:.2f} segundos.")
-                print(respuesta_texto)
-                return respuesta_texto
-            
-            #si esta saturado
-            elif response.status_code == 429:
-                print(f"el modelo {modelo} esta saturado (429). Esperando 15 segundos para reintentar...")
-                time.sleep(15)
-                intentos += 1
-                continue
-            
-            # si esta caido
-            elif response.status_code == 404:
-                print(f"El modelo {modelo} tiro error 404 (No disponible).")
-                break 
+        cursor = conexion.cursor(buffered=True)
+
+        for i in range(len(lista_ejercicios)):
+            id_ejercicio = lista_ejercicios[i][0]
+            enunciado = lista_ejercicios[i][1]
+            print(f"\nProcesando ID {id_ejercicio} | Enunciado: {enunciado[:60]}...")
+
+            consigna_final = prompt + f" {enunciado}"
+
+            data = {
+                "model": modelo,
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "Pretende que eres un profesor de matemáticas de Harvard. Analiza y resuelve el ejercicio que te van a brindar. "
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Analiza y resuelve este ejercicio. Da el resultado final claramente. No quiero explicaciones, SOLO el resultado final sin decoraciones: {consigna_final}"
+                    }
+                ]
+            }
+
+            intentos = 0
+            while intentos < 2:
+                print(f"-> Llamando a OpenRouter (Intento {intentos + 1})...")
                 
-            else:
-                print(f"Error {response.status_code} con el modelo {modelo}: {response.text}")
-                break
+                try:
+                    inicio = time.perf_counter()
                     
-        except Exception as e:
-            print(f"Error de conexión: {e}")
-            break
+                    response = requests.post(
+                        url="https://openrouter.ai/api/v1/chat/completions",
+                        headers=headers,
+                        data=json.dumps(data)
+                    )
+                    
+                    fin = time.perf_counter()
+                    tiempo_ejercicio = round(fin - inicio, 3)
+                    
+                    if response.status_code == 200:
+                        resultado_json = response.json()
+                        solucion = resultado_json['choices'][0]['message']['content']
+                        print(f"-> Respuesta recibida con éxito en {tiempo_ejercicio}s.")
 
-    print("No se pudo obtener respuesta de ningún modelo.")
-    return None
+                        # Inserción en la base de datos utilizando el mismo cursor
+                        try:
+                            sql_insertar = "INSERT INTO resultado (idejercicio, nombreia, resultado, tiempoejercicio) VALUES (%s, %s, %s, %s)"
+                            valores = (int(id_ejercicio), "GPT-OSS-120B", str(solucion), float(tiempo_ejercicio))
+
+                            cursor.execute(sql_insertar, valores)
+                            conexion.commit()
+                            print(f" OK: Guardado en BD para ID {id_ejercicio}.")
+                        except mysql.connector.Error as err:
+                            print(f" ERROR DE MYSQL al insertar ID {id_ejercicio}: {err}")
+                            conexion.rollback()
+                        
+                        break # Éxito: salimos del bucle de intentos para este ejercicio
+
+                    elif response.status_code == 429:
+                        print(f"El modelo {modelo} está saturado (429). Esperando 15 segundos para reintentar...")
+                        time.sleep(15)
+                        intentos += 1
+                        continue
+
+                    elif response.status_code == 404:
+                        print(f"El modelo {modelo} tiró error 404 (No disponible). Saltando ejercicio.")
+                        break 
+                        
+                    else:
+                        print(f"Error {response.status_code} con el modelo {modelo}: {response.text}")
+                        break
+
+                except Exception as e:
+                    print(f"Error de conexión en la petición para ID {id_ejercicio}: {e}")
+                    break
+
+            # Espera estándar entre diferentes ejercicios para evitar saturar tu cuota
+            print("Esperando 3 segundos antes del siguiente ejercicio...")
+            time.sleep(3)
+
+    except Exception as e:
+        print(f"Error crítico en la conexión o ejecución general: {e}")
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexion and conexion.is_connected():
+            conexion.close()
+            print("\nConexión a la base de datos cerrada correctamente.")
 
 
 
-def analisiscongemini():
+def analisiscongemini(var):
 
     conexion = mysql.connector.connect(
             host='localhost',
@@ -215,7 +267,7 @@ def analisiscongemini():
         )
 
     print("Trayendo ejercicios desde la base de datos para resolverlos con Gemini...")
-    lista_ejercicios = emitir_ejercicio()
+    lista_ejercicios = emitir_ejercicio(var)
     
     client = genai.Client(api_key=api_keyy)
 
@@ -231,11 +283,17 @@ def analisiscongemini():
         consigna_final = prompt + f" {enunciado}"
     
         try:
+
+            inicio = time.perf_counter()
             
             response = client.models.generate_content(
                 model='gemini-2.5-flash', 
                 contents=consigna_final
             )
+
+            fin = time.perf_counter()
+
+            tiempo_ejercicio = round(fin - inicio, 3)
 
             # retora el texto limpio
             resultado = response.text.strip()
@@ -244,8 +302,8 @@ def analisiscongemini():
             if conexion.is_connected():
                 cursor = conexion.cursor()
 
-                sql_insertar = "INSERT INTO resultado (idejercicio, nombreia, resultado) VALUES (%s, %s, %s)"
-                valores = (id_ejercicio, "Gemini", resultado)
+                sql_insertar = "INSERT INTO resultado (idejercicio, nombreia, resultado, tiempoejercicio) VALUES (%s, %s, %s, %s)"
+                valores = (id_ejercicio, "Gemini", resultado, tiempo_ejercicio)
 
                 cursor.execute(sql_insertar, valores)
                 conexion.commit()
@@ -258,78 +316,172 @@ def analisiscongemini():
 
 
 
-def analisisconqwenmath(ejercicio):
-    
-
-    OPENROUTER_KEY = os.getenv('API_KEY_LAGUNA')    
-    
+def analisisconqwenmath(var):
+    OPENROUTER_KEY = os.getenv('API_KEY_LAGUNA') 
 
     client = OpenAI(
         base_url="https://openrouter.ai/api/v1",
         api_key=OPENROUTER_KEY,
     )
 
+    conexion = None
+    cursor = None
 
     try:
-        
-        prompt_completo = (
-            "Pretende que eres un profesor de matemáticas de Harvard. Analiza este ejercicio matemático. "
-            f"El ejercicio es: {ejercicio}. "
-            "Da el resultado final claramente como RESULTADO QWEN-MATH: [valor]. "
-            "No quiero explicaciones, SOLO el resultado final sin decoraciones."
+        conexion = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='12345', 
+            database='tp_metodologia'
         )
 
-        response = client.chat.completions.create(
-            model="qwen/qwen-2-vl-72b-instruct", 
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt_completo  
-                }
-            ]
-        )
+        print("Trayendo ejercicios desde la base de datos para resolverlos con Qwen-Math...")
+        lista_ejercicios = emitir_ejercicio(var)
+
+        if not lista_ejercicios:
+            print("No se encontraron ejercicios para procesar.")
+            return
         
-        solucion = response.choices[0].message.content
-        print(solucion)
-        return solucion
+        cursor = conexion.cursor(buffered=True)
+
+        for i in range(len(lista_ejercicios)):
+            id_ejercicio = lista_ejercicios[i][0]
+            enunciado = lista_ejercicios[i][1]
+            print(f"\nProcesando ID {id_ejercicio} | Enunciado: {enunciado[:60]}...")
+
+            consigna_final = prompt + f" {enunciado}"
+
+            # ESTE TRY DEBE ESTAR ADENTRO DEL FOR
+            try:
+                inicio = time.perf_counter()
+
+                response = client.chat.completions.create(
+                    model="qwen/qwen-2-vl-72b-instruct", 
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": consigna_final 
+                        }
+                    ]
+                )
+
+                fin = time.perf_counter()
+                tiempo_ejercicio = round(fin - inicio, 3)
+                
+                solucion = response.choices[0].message.content
+                print(f"-> Respuesta recibida con éxito en {tiempo_ejercicio}s.")
+
+                try:
+                    sql_insertar = "INSERT INTO resultado (idejercicio, nombreia, resultado, tiempoejercicio) VALUES (%s, %s, %s, %s)"
+                    # Corregido "Julius" por "Qwen-Math"
+                    valores = (int(id_ejercicio), "Qwen-Math", str(solucion), float(tiempo_ejercicio))
+
+                    cursor.execute(sql_insertar, valores)
+                    conexion.commit()
+                    print(f" OK: Guardado en BD para ID {id_ejercicio}.")
+
+                except mysql.connector.Error as err:
+                    print(f" ERROR DE MYSQL al insertar ID {id_ejercicio}: {err}")
+                    conexion.rollback()
+
+            except Exception as e:
+                print(f"Error en la petición OpenRouter para ID {id_ejercicio}: {e}")
+
+            # Pausa para evitar bloqueos por límite de peticiones (Rate Limit)
+            print("Esperando 3 segundos antes del siguiente ejercicio...")
+            time.sleep(3)
 
     except Exception as e:
-        print(f"error" + str(e))
+        print(f"Error crítico en la conexión o ejecución: {e}")
+
+    finally:
+        # Aseguramos el cierre de conexiones siempre
+        if cursor:
+            cursor.close()
+        if conexion and conexion.is_connected():
+            conexion.close()
+            print("\nConexión a la base de datos cerrada correctamente.")
 
 
-
-def probar_texto_julius(enunciado):
-    
-    print(f"-> Gemini extrajo el siguiente texto: '{enunciado}'")
-    consigna_final = prompt + f" {enunciado}"
-    
-    print(f"2. Intentando enviar el mensaje: '{enunciado}' a Julius para resolverlo...")
-
+def probar_texto_julius(var):
+    conexion = None
+    cursor = None
     try:
-        response = julius.chat.completions.create(
-            model="default",
-            messages=[
-                {
-                    "role": "user",
-                    "content": consigna_final
-                }
-            ],
-            advanced_reasoning=True  
+        conexion = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='12345', 
+            database='tp_metodologia'
         )
         
-        print("3. Petición enviada. Procesando respuesta...")
+        print("Trayendo ejercicios desde la base de datos para resolverlos con Julius...")
+        lista_ejercicios = emitir_ejercicio(var)
         
-        if not response:
-            return "Error: El servidor de Julius devolvió un objeto vacío (None)."
+        if not lista_ejercicios:
+            print("No se encontraron ejercicios para procesar.")
+            return
+
+        # Usamos buffered=True para mantener los datos en memoria si es necesario
+        cursor = conexion.cursor(buffered=True)
+
+        for i in range(len(lista_ejercicios)):
+            id_ejercicio = lista_ejercicios[i][0]
+            enunciado = lista_ejercicios[i][1]
+            print(f"\nProcesando ID {id_ejercicio} | Enunciado: {enunciado[:60]}...")
+
+            consigna_final = prompt + f" {enunciado}"
+
+            try:
+                inicio = time.perf_counter()
+                
+                response = julius.chat.completions.create(
+                    model="default",
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": consigna_final
+                        }
+                    ]
+                )
+                
+                if response and hasattr(response, 'message') and response.message.content:
+                    fin = time.perf_counter()
+                    tiempo_ejercicio = round(fin - inicio, 3)
+                    resultado = response.message.content
+                    print(f"-> Respuesta recibida con éxito en {tiempo_ejercicio}s.")
+                    
+                    try:
+                        # REUTILIZAMOS EL CURSOR PRINCIPAL
+                        sql_insertar = "INSERT INTO resultado (idejercicio, nombreia, resultado, tiempoejercicio) VALUES (%s, %s, %s, %s)"
+                        valores = (int(id_ejercicio), "Julius", str(resultado), float(tiempo_ejercicio))
+
+                        cursor.execute(sql_insertar, valores)
+                        conexion.commit()
+                        print(f" OK: Guardado en BD para ID {id_ejercicio}.")
+
+                    except mysql.connector.Error as err:
+                        print(f" ERROR DE MYSQL al insertar ID {id_ejercicio}: {err}")
+                        conexion.rollback()
+                else:
+                    print(f"Alerta: Julius no devolvió texto para el ID {id_ejercicio}.")
+
+            except Exception as e:
+                print(f"Error procesando ID {id_ejercicio}: {e}")
             
-        if hasattr(response, 'message') and response.message.content:
-            return response.message.content
-        else:
-            return f"Alerta: Se conectó pero la respuesta no trae texto. Estructura recibida: {response}"
+            print("Esperando 5 segundos antes del siguiente ejercicio...")
+            time.sleep(15)
 
     except Exception as e:
-        return f"Error crítico en la conexión: {e}"
+        print(f"Error crítico en la conexión o ejecución: {e}")
+        
+    finally:
+        # Cierre seguro de la conexión y el único cursor
+        if cursor:
+            cursor.close()
+        if conexion and conexion.is_connected():
+            conexion.close()
+            print("\nConexión a la base de datos cerrada correctamente.")
 
 
 
-gemini_respuesta()
+analisiscongemini(62)
