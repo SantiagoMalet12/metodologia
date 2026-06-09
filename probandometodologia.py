@@ -39,6 +39,81 @@ julius = Julius(api_key=TOKEN_JULIUS)
 api_keyy = os.getenv('API_KEYY')
 
 
+def mostrar_tiempos_promedio():
+    conexion = None
+    cursor = None
+    try:
+        conexion = mysql.connector.connect(
+            host='localhost',         
+            user='root',              
+            password='12345',    
+            database='tp_metodologia'       
+        )
+
+        if conexion.is_connected():
+            cursor = conexion.cursor()
+            
+            # Sacamos el promedio real de segundos (SIN multiplicar por 100)
+            query = """
+                SELECT nombreia, AVG(tiempoejercicio) AS tiempo_promedio 
+                FROM resultado 
+                GROUP BY nombreia
+            """
+            cursor.execute(query)
+            resultados = cursor.fetchall()
+            
+            for fila in resultados:
+                nombre_ia = fila[0]
+                segundos = fila[1] if fila[1] is not None else 0.0
+                print(f"Tiempo promedio de respuesta: {segundos:.3f} segundos para {nombre_ia}")
+
+    except Error as e:
+        print(f"Error al conectar o leer la base de datos: {e}")
+    finally:
+        if cursor:
+            cursor.close()
+        if conexion and conexion.is_connected():
+            conexion.close()
+
+
+def mostrar_porcentajes_correctos():
+    conexion = None
+    cursor = None
+    try:
+        conexion = mysql.connector.connect(
+            host='localhost',         
+            user='root',              
+            password='12345',    
+            database='tp_metodologia'       
+        )
+
+        if conexion.is_connected():
+            cursor = conexion.cursor()
+            
+            # SQL agrupa por IA y calcula el porcentaje real automáticamente
+            query = """
+                SELECT nombreia, (AVG(correcto) * 100) AS porcentaje 
+                FROM resultado 
+                GROUP BY nombreia
+            """
+            cursor.execute(query)
+            resultados = cursor.fetchall()
+            
+            # El bucle solo recorre los resultados ya procesados por la BD
+            for fila in resultados:
+                nombre_ia = fila[0]
+                porcentaje = fila[1] if fila[1] is not None else 0.0
+                print(f"{porcentaje:.2f}% de ejercicios correctos para {nombre_ia}")
+
+    except Error as e:
+        print(f"Error al conectar o leer la base de datos: {e}")
+    finally:
+        if cursor:
+            cursor.close()
+        if conexion and conexion.is_connected():
+            conexion.close()
+
+
 
 def emitir_ejercicio(id_minimo):
     try:
@@ -484,4 +559,5 @@ def probar_texto_julius(var):
 
 
 
-analisiscongemini(62)
+##mostrar_porcentajes_correctos()
+mostrar_tiempos_promedio()
